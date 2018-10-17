@@ -15,6 +15,8 @@ FROM alpine
 # set working directory
 WORKDIR /go/bin
 
+COPY --from=builder /go/bin/productservice /go/bin/productservice
+
 USER 1001
 # run the binary
 CMD ["./companyservice"]
