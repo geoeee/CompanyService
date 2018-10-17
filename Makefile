@@ -60,7 +60,7 @@ docker_v1:
 	docker push zhangzj/company_service:v1 
 
 .PHONY: docker_v2
-docker_v1:
+docker_v2:
 	docker build -t zhangzj/company_service:v2 .
 	docker push zhangzj/company_service:v2 
 
