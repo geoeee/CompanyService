@@ -10,7 +10,7 @@ import (
 	"github.com/go-openapi/loads"
 )
 
-var portFlag = flag.Int("port", 8081, "Port to run this service on")
+var portFlag = flag.Int("port", 8080, "Port to run this service on")
 
 func main() {
 	// load embedded swagger file
