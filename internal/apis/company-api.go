@@ -67,6 +67,8 @@ func toList(cm map[string]*genModels.Company, req *http.Request) []*genModels.Co
 		if err != nil {
 			fmt.Println("get product: ", err)
 		} else {
+
+			c.Products = make([]interface{}, 0)
 			for _, p := range ps {
 				c.Products = append(c.Products, p)
 			}
