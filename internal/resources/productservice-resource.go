@@ -1,11 +1,15 @@
 package resources
 
 import (
+	"CompanyService/internal/utils"
 	"CompanyService/openapi/gen/productservice/client"
 	prodOps "CompanyService/openapi/gen/productservice/client/operations"
 	prodModels "CompanyService/openapi/gen/productservice/models"
 	"fmt"
+	"net/http"
 	"os"
+
+	httptransport "github.com/go-openapi/runtime/client"
 )
 
 var (
@@ -21,7 +25,7 @@ type ProductService struct {
 }
 
 // NewProductServiceResource ...
-func NewProductServiceResource() IProductService {
+func NewProductServiceResource(header http.Header) IProductService {
 	if h := os.Getenv("product_service_host"); h != "" {
 		ProductServiceHost = h
 	}
@@ -34,6 +38,9 @@ func NewProductServiceResource() IProductService {
 	fmt.Println("product basepath:", ProductServiceBasePath)
 	cfg := client.DefaultTransportConfig().WithHost(ProductServiceHost).WithBasePath(ProductServiceBasePath)
 	resource.client = client.NewHTTPClientWithConfig(nil, cfg)
+
+	resource.client.Transport.(*httptransport.Runtime).Transport = utils.NewRoundTripper(resource.client.Transport.(*httptransport.Runtime).Transport, header)
+
 	return &resource
 }
 

@@ -6,6 +6,7 @@ import (
 	"CompanyService/openapi/gen/companyservice/server/operations"
 	prodOps "CompanyService/openapi/gen/productservice/client/operations"
 	"CompanyService/pkg/version"
+	"context"
 	"fmt"
 	"net/http"
 	"os"
@@ -55,14 +56,17 @@ func toList(cm map[string]*genModels.Company, req *http.Request) []*genModels.Co
 		Headers: req.Header,
 	}
 
-	prodSvc := resources.NewProductServiceResource()
+	prodSvc := resources.NewProductServiceResource(req.Header)
 	for _, c := range cm {
 		c.Meta = meta
 
-		params := &prodOps.GetAPIV1ProductsParams{
-			CompanyID: &c.CompanyID,
-			Context:   req.Context(),
-		}
+		ctx := req.Context()
+		k := "x-request-platform"
+		context.WithValue(ctx, &k, "ios")
+		params := &prodOps.GetAPIV1ProductsParams{}
+		params.SetCompanyID(&c.CompanyID)
+		params.SetContext(ctx)
+
 		ps, err := prodSvc.GetProducts(params)
 		if err != nil {
 			fmt.Println("get product: ", err)
@@ -95,7 +99,7 @@ func (api *CompanyAPI) Get(params operations.GetAPIV1CompaniesCompanyIDParams) m
 		Headers: params.HTTPRequest.Header,
 	}
 	resp.Meta = meta
-	prodSvc := resources.NewProductServiceResource()
+	prodSvc := resources.NewProductServiceResource(params.HTTPRequest.Header)
 	pParam := &prodOps.GetAPIV1ProductsParams{
 		CompanyID: &cID,
 		Context:   params.HTTPRequest.Context(),
