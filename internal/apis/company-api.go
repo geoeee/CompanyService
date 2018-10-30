@@ -70,6 +70,7 @@ func toList(cm map[string]*genModels.Company, req *http.Request) []*genModels.Co
 		ps, err := prodSvc.GetProducts(params)
 		if err != nil {
 			fmt.Println("get product: ", err)
+			c.Products = nil
 		} else {
 
 			c.Products = make([]interface{}, 0)
